@@ -2,6 +2,8 @@
 
 **Self-hosted, AI-native development ecosystem — Cursor IDE written entirely in Frontier Syntax.**
 
+> Version: 1.0.1 (v2.0 Patched)
+
 > 🚀 ARC VERDICT: BUILDING CURSOR FROM SCRATCH IN FRONTIER
 
 You're not just building an engine — you're building the tool that builds the engine using the language we created. Ultimate dogfooding.
@@ -31,6 +33,16 @@ python3 build/arc_orchestrator.py --slides 15.9,15.10,15.11,15.12
 
 # List slides and benchmarks
 python3 build/arc_orchestrator.py --list
+
+# Frontier v2.0 — verify all 7 innovations
+python3 build/arc_orchestrator.py --verify
+
+# Frontier v2.0 — full patch verification + certificate
+python3 build/arc_orchestrator.py --verify-patch --version 2.0
+
+# Generate audit reports
+python3 build/audit_generator.py --type patch --output patch_audit_report.md
+python3 build/audit_generator.py --type comparison --output performance_report.md
 ```
 
 Expected success output:

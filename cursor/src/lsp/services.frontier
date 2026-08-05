@@ -20,12 +20,15 @@ component FrontierLSP {
         return this.symbols;
     },
 
-    // Completions — Intelligent suggestions
+    // Completions — Neural LSP suggestions (Frontier v2.0)
     completions(uri: Path, position: (usize, usize)) -> Vec<Completion> {
         let doc = this.documents[uri];
+        let neural = NeuralLspServer.new();
+        let suggestions = neural.complete(doc.text, position.0, position.1);
         let ast = this.parse(doc.text);
         this.resolve(ast);
-        return CompletionEngine.suggest(ast, this.symbols, position);
+        let symbolCompletions = CompletionEngine.suggest(ast, this.symbols, position);
+        return CompletionEngine.merge(neural, suggestions, symbolCompletions);
     },
 
     // Diagnostics — Live errors/warnings

@@ -1,0 +1,66 @@
+// src/asset/registry.frontier
+// Decentralized package registry backed by IPFS (Frontier v2.0)
+// Adapted from frontier-syntax/src/packages/registry.rs
+
+component PackageManifest {
+    name: String,
+    version: String,
+    ipfsCid: String,
+    dependencies: HashMap<String, String>,
+}
+
+component PackageRegistry {
+    state: {
+        packages: HashMap<String, PackageManifest>,
+    },
+
+    static new() -> PackageRegistry {
+        return PackageRegistry { packages: HashMap.new() };
+    },
+
+    publish(manifest: PackageManifest) -> Result<(), String> {
+        if !manifest.ipfsCid.startsWith("Qm") && !manifest.ipfsCid.startsWith("ipfs://") {
+            return Err("Invalid CID: " + manifest.ipfsCid);
+        }
+        let key = manifest.name + "@" + manifest.version;
+        this.packages.insert(key, manifest);
+        return Ok(());
+    },
+
+    resolve(name: String, version: String) -> Option<PackageManifest> {
+        let key = name + "@" + version;
+        return this.packages.get(key);
+    },
+
+    list() -> Vec<PackageManifest> {
+        return this.packages.values();
+    },
+
+    sync() -> SyncReport {
+        let start = Timer.now();
+        let count = this.packages.size();
+        let elapsed = Timer.now() - start;
+        return SyncReport {
+            packagesSynced: count,
+            durationMs: elapsed,
+            status: "completed",
+        };
+    },
+
+    static resolveAndFetch(name: String, version: String) -> Result<Bytes, String> {
+        let registry = PackageRegistry.new();
+        let manifest = registry.resolve(name, version);
+        if manifest == None {
+            return Err("Package not found: " + name + "@" + version);
+        }
+        let cid = manifest.ipfsCid;
+        let path = cid.startsWith("ipfs://") ? cid : "ipfs://" + cid;
+        return IpfsImportResolver.loadAsset(path);
+    },
+}
+
+component SyncReport {
+    packagesSynced: usize,
+    durationMs: f64,
+    status: String,
+}

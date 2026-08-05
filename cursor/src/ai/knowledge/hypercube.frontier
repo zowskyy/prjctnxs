@@ -1,0 +1,88 @@
+// cursor/src/ai/knowledge/hypercube.frontier
+// Knowledge Hypercube — binary algorithm/tradeoff index (Frontier v2.0)
+// Adapted from frontier-syntax/src/knowledge/hypercube/mod.rs
+
+component KnowledgeHypercube {
+    state: {
+        indexPath: String,
+        loaded: bool,
+        numAlgorithms: u64,
+        numStructures: u64,
+        numOptimizations: u64,
+        numLanguages: u64,
+    },
+
+    static MAGIC: [u8; 8] = b"FRONTIER",
+    static VERSION: u32 = 1,
+
+    static load(indexPath: String) -> KnowledgeHypercube {
+        let cube = KnowledgeHypercube {
+            indexPath: indexPath,
+            loaded: false,
+            numAlgorithms: 0,
+            numStructures: 0,
+            numOptimizations: 0,
+            numLanguages: 0,
+        };
+        cube.parseIndex();
+        return cube;
+    },
+
+    parseIndex() {
+        let data = FileSystem.readBytes(this.indexPath);
+        if data.length() < 124 { return; }
+
+        let magic = data.slice(0, 8);
+        if magic != KnowledgeHypercube.MAGIC { return; }
+
+        this.numAlgorithms = data.readU64LE(8);
+        this.numStructures = data.readU64LE(16);
+        this.numOptimizations = data.readU64LE(24);
+        this.numLanguages = data.readU64LE(32);
+        this.loaded = true;
+    },
+
+    isLoaded() -> bool {
+        return this.loaded;
+    },
+
+    lookupAlgorithm(nameHash: u64) -> Option<AlgorithmEntry> {
+        if !this.loaded { return None; }
+        return AlgorithmIndex.lookup(nameHash, this.indexPath);
+    },
+
+    getTradeoffs(algorithmHash: u64) -> Vec<TradeoffEntry> {
+        if !this.loaded { return []; }
+        return TradeoffIndex.query(algorithmHash, this.indexPath);
+    },
+
+    getAncestry(algorithmHash: u64) -> Vec<u64> {
+        if !this.loaded { return []; }
+        return AncestryGraph.traverse(algorithmHash, this.indexPath);
+    },
+
+    suggestOptimizations(code: String) -> Vec<String> {
+        if !this.loaded { return []; }
+        let ast = FrontierParser.parse(code);
+        let suggestions: Vec<String> = [];
+        for node in ast.nodes() {
+            let hash = HashUtils.fnv1a64(node.kind());
+            let tradeoffs = this.getTradeoffs(hash);
+            for t in tradeoffs {
+                if t.speed > 7 { suggestions.push("Consider faster algorithm variant"); }
+                if t.memory > 7 { suggestions.push("Consider memory-efficient variant"); }
+            }
+        }
+        return suggestions;
+    },
+
+    stats() -> HypercubeStats {
+        return HypercubeStats {
+            algorithms: this.numAlgorithms,
+            structures: this.numStructures,
+            optimizations: this.numOptimizations,
+            languages: this.numLanguages,
+            indexSize: FileSystem.size(this.indexPath),
+        };
+    },
+}

@@ -1,0 +1,132 @@
+// cursor/src/ai/completion.frontier
+// Neural LSP — neural-symbolic code completion (Frontier v2.0)
+// Adapted from frontier-syntax/src/neural/completion.rs
+
+component NeuralCompletion {
+    state: {
+        contextWindow: usize,
+        vocabulary: Vec<String>,
+        modelPath: Option<String>,
+    },
+
+    static new(contextWindow: usize) -> NeuralCompletion {
+        return NeuralCompletion {
+            contextWindow: contextWindow,
+            vocabulary: ["let", "fn", "if", "else", "while", "return",
+                         "import", "requires", "ensures", "invariant",
+                         "true", "false"],
+            modelPath: None,
+        };
+    },
+
+    static withModel(modelPath: String) -> NeuralCompletion {
+        let engine = NeuralCompletion.new(16);
+        engine.modelPath = Some(modelPath);
+        return engine;
+    },
+
+    modelLoaded() -> bool {
+        if this.modelPath == None { return false; }
+        return FileSystem.exists(this.modelPath.unwrap());
+    },
+
+    suggest(source: String, cursor: usize) -> Vec<String> {
+        if this.modelLoaded() {
+            return this.neuralComplete(source, cursor);
+        }
+        return this.heuristicComplete(source, cursor);
+    },
+
+    analyzeIntent(partialSource: String) -> String {
+        if partialSource.contains("let ") { return "variable_declaration"; }
+        if partialSource.contains("fn ") { return "function_definition"; }
+        if partialSource.contains("if ") { return "conditional"; }
+        if partialSource.contains("while ") { return "loop"; }
+        if partialSource.contains("import") { return "import"; }
+        if partialSource.contains("@") { return "proof_annotation"; }
+        if partialSource.contains("return") { return "return"; }
+        return "expression";
+    },
+
+    neuralComplete(source: String, cursor: usize) -> Vec<String> {
+        // Embedded neural model integration point — delegates to heuristic until bundled model ships
+        return this.heuristicComplete(source, cursor);
+    },
+
+    heuristicComplete(source: String, cursor: usize) -> Vec<String> {
+        let prefix = source.substring(0, cursor.min(source.length()));
+        let suggestions: Vec<String> = [];
+
+        if prefix.endsWith("let ") || prefix.endsWith("let\t") {
+            suggestions.extend(["x", "y", "result"]);
+        }
+        if prefix.contains("import \"") && !prefix.contains(" as ") {
+            suggestions.push("ipfs://QmExampleHash1234567890");
+        }
+        if prefix.endsWith("@") {
+            suggestions.extend(["requires", "ensures", "invariant"]);
+        }
+        if prefix.endsWith("fn ") {
+            suggestions.extend(["main", "double", "process"]);
+        }
+        if prefix.trim().isEmpty() || prefix.endsWith(" ") {
+            for word in this.vocabulary {
+                if !suggestions.contains(word) {
+                    suggestions.push(word);
+                }
+            }
+        }
+        if prefix.endsWith("l") { suggestions.push("let "); }
+        if prefix.endsWith("f") { suggestions.push("fn "); }
+
+        suggestions.sort();
+        suggestions.dedup();
+        return suggestions.truncate(this.contextWindow);
+    },
+
+    rank(suggestions: Vec<String>, query: String) -> Vec<String> {
+        return suggestions.sortBy(|s| {
+            if s.startsWith(query) { return 0; }
+            if s.contains(query) { return 1; }
+            return 2;
+        });
+    },
+}
+
+component NeuralLspServer {
+    state: {
+        completion: NeuralCompletion,
+        diagnostics: Vec<Diagnostic>,
+    },
+
+    static new() -> NeuralLspServer {
+        return NeuralLspServer {
+            completion: NeuralCompletion.new(16),
+            diagnostics: [],
+        };
+    },
+
+    static withModel(modelPath: String) -> NeuralLspServer {
+        return NeuralLspServer {
+            completion: NeuralCompletion.withModel(modelPath),
+            diagnostics: [],
+        };
+    },
+
+    complete(source: String, line: usize, character: usize) -> Vec<String> {
+        let lines = source.lines();
+        let mut offset = 0;
+        for (i, l) in lines.enumerate() {
+            if i == line {
+                offset += character.min(l.length());
+                break;
+            }
+            offset += l.length() + 1;
+        }
+        return this.completion.suggest(source, offset);
+    },
+
+    analyzeIntent(source: String) -> String {
+        return this.completion.analyzeIntent(source);
+    },
+}

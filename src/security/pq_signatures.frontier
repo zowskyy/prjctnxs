@@ -1,0 +1,73 @@
+// src/security/pq_signatures.frontier
+// Post-Quantum Signatures with Dilithium3 (Frontier v2.0)
+// Adapted from frontier-syntax/src/pq_signatures.rs
+
+component PqCrypto {
+    state: {
+        publicKey: Bytes,
+        secretKey: Bytes,
+    },
+
+    static generateKeys() -> PqCrypto {
+        let (publicKey, secretKey) = Dilithium3.keypair();
+        return PqCrypto { publicKey: publicKey, secretKey: secretKey };
+    },
+
+    sign(message: Bytes) -> PQSignature {
+        let signed = Dilithium3.sign(message, this.secretKey);
+        return PQSignature {
+            signature: signed.asBytes(),
+            publicKey: this.publicKey.asBytes(),
+            algorithm: "Dilithium3",
+        };
+    },
+
+    verify(message: Bytes, signature: PQSignature) -> bool {
+        let signed = Dilithium3.SignedMessage.fromBytes(signature.signature);
+        if signed == None { return false; }
+        let opened = Dilithium3.open(signed, this.publicKey);
+        return opened == message;
+    },
+
+    static verifyDetached(message: Bytes, signature: PQSignature) -> bool {
+        let pk = Dilithium3.PublicKey.fromBytes(signature.publicKey);
+        if pk == None { return false; }
+        let signed = Dilithium3.SignedMessage.fromBytes(signature.signature);
+        if signed == None { return false; }
+        let opened = Dilithium3.open(signed, pk);
+        return opened == message;
+    },
+
+    publicKeyBytes() -> Bytes {
+        return this.publicKey.asBytes();
+    },
+
+    signAst(ast: JsonValue) -> PQSignature {
+        let astJson = Json.stringify(ast);
+        return this.sign(astJson.asBytes());
+    },
+}
+
+component PQSignature {
+    signature: Bytes,
+    publicKey: Bytes,
+    algorithm: String,
+}
+
+component PQSignatureService {
+    static signArtifact(content: String) -> (String, PQSignature) {
+        let crypto = PqCrypto.generateKeys();
+        let signature = crypto.sign(content.asBytes());
+        let hash = HashUtils.sha3_256(content);
+        return (hash, signature);
+    },
+
+    static verifyGameUpdate(content: String, signature: PQSignature) -> bool {
+        let start = Timer.now();
+        let result = PqCrypto.verifyDetached(content.asBytes(), signature);
+        let elapsed = Timer.now() - start;
+        // ARC Gate: verification < 100ms
+        assert(elapsed < 100.0, "PQ verification exceeded 100ms gate");
+        return result;
+    },
+}
