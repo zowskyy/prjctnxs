@@ -11,6 +11,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+from validator import UnifiedValidator
+
+_validator = UnifiedValidator(ROOT)
+
 V3_MODULES = [
     ("Neural Engine v3", "frontier/ai/neural_engine_v3.frontier",
      ["QuantumNeuralEngineV3", "hyper_sparse_forward", "neural_fusion", "hdr_plus"]),
@@ -61,16 +65,7 @@ class QuantumLeapReport:
 
 
 def verify_file_markers(rel_path: str, markers: list[str]) -> tuple[bool, int, int]:
-    path = ROOT / rel_path
-    if not path.exists():
-        archive_path = ROOT / "archive" / rel_path
-        if archive_path.exists():
-            path = archive_path
-        else:
-            return False, 0, len(markers)
-    body = path.read_text(encoding="utf-8")
-    found = sum(1 for m in markers if m in body)
-    return found == len(markers), found, len(markers)
+    return _validator.verify_structural(rel_path, markers)
 
 
 def verify_modules() -> list[QuantumGate]:

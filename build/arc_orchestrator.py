@@ -300,6 +300,10 @@ PATCHES = {
     "improve-v2.0": "Apply Project Nexus v2.0 comprehensive improvements (7/7)",
     "quantum-leap-v2.5": "Apply Project Nexus v2.5 Quantum Leap — doubled performance (10×)",
     "bridge-to-reality": "Bridge to frontier-syntax Rust implementation + vertical slice",
+    "complexity-reduction": "MCPE complexity reduction — unified validator + canonical specs",
+    "runtime-engine": "Frontier runtime engine — nexus-runtime crate + ECS benchmark",
+    "game-loop-ecs": "Game loop + ECS at 1024 Hz with 1000+ entities",
+    "full-integration": "Full integration verify — workspace, tests, bridge, IDE frontend",
 }
 
 
@@ -465,6 +469,53 @@ def run_bridge_patch() -> int:
     return run_verify_real()
 
 
+def run_complexity_reduction_patch() -> int:
+    from complexity_audit import main as audit_main
+    from complexity_reduction_apply import main as apply_main
+
+    audit_main()
+    return apply_main()
+
+
+def run_runtime_engine_patch() -> int:
+    import subprocess
+
+    print("🔨 Building nexus-runtime...")
+    proc = subprocess.run(
+        ["cargo", "build", "--release", "-p", "nexus-runtime"],
+        cwd=ROOT,
+    )
+    if proc.returncode != 0:
+        return proc.returncode
+    from runtime_verify import main as verify_main
+
+    return verify_main()
+
+
+def run_game_loop_ecs_patch() -> int:
+    return run_runtime_engine_patch()
+
+
+def run_full_integration_patch() -> int:
+    from integration_verify import main as integration_main
+
+    return integration_main()
+
+
+def run_verify_all() -> int:
+    exit_code = 0
+    for fn in (
+        run_v2_verify,
+        run_improvements_verify,
+        run_quantum_leap_verify,
+        run_verify_real,
+        run_full_integration_patch,
+    ):
+        if fn() != 0:
+            exit_code = 1
+    return exit_code
+
+
 def run_quantum_leap_verify() -> int:
     from quantum_leap_verify import (
         print_quantum_leap_report,
@@ -560,6 +611,14 @@ def run_patch(name: str) -> int:
         return run_quantum_leap_verify()
     if name == "bridge-to-reality":
         return run_bridge_patch()
+    if name == "complexity-reduction":
+        return run_complexity_reduction_patch()
+    if name == "runtime-engine":
+        return run_runtime_engine_patch()
+    if name == "game-loop-ecs":
+        return run_game_loop_ecs_patch()
+    if name == "full-integration":
+        return run_full_integration_patch()
     return 1
 
 
@@ -604,6 +663,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Verify real Rust bridge, measured metrics, and vertical slice",
     )
+    parser.add_argument(
+        "--verify-all",
+        action="store_true",
+        help="Run full integration verification (workspace, tests, runtime, bridge)",
+    )
     parser.add_argument("--verify-patch", action="store_true", help="Verify v2.0 patch and generate certificate")
     parser.add_argument("--version", default="2.0", help="Patch version for --verify-patch")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable summary")
@@ -620,6 +684,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.verify_real:
         return run_verify_real()
+
+    if getattr(args, "verify_all", False):
+        return run_verify_all()
 
     if args.verify_patch:
         return run_v2_verify_patch(args.version)

@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+members = [
+    "engine/nexus-runtime",
+    "external/frontier-syntax",
+    "cursor-app/src-tauri",
+]
+
+[workspace.package]
+version = "3.0.0"
+edition = "2021"
+license = "MIT"
+authors = ["Project Nexus Contributors"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+
+[profile.dev]
+opt-level = 1

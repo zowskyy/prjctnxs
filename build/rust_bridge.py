@@ -204,6 +204,37 @@ class RustBridge:
             "test_elapsed_sec": round(test_sec, 4),
         }
 
+    def execute(self, command: str, args: dict[str, Any] | None = None) -> Any:
+        """Unified entry point for all Rust bridge operations."""
+        args = args or {}
+        if command == "build":
+            return self.build(release=bool(args.get("release", True)))
+        if command == "health":
+            return self.health_check()
+        if command == "parse-v2":
+            return self.parse_v2(Path(args["path"]))
+        if command == "compile-wasm":
+            source = Path(args["source"])
+            output = Path(args["output"]) if args.get("output") else None
+            return self.compile_to_wasm(source, output)
+        if command == "compile-source":
+            return self.compile_frontier(str(args["source"]), args.get("suffix", ".fr"))
+        if command == "fuzz":
+            return self.measure_parse_throughput(int(args.get("iterations", 5000)))
+        if command == "test":
+            ok, output, elapsed = self.run_cargo_test(str(args.get("filter", "")))
+            return {"passed": ok, "output": output, "elapsed_sec": round(elapsed, 4)}
+        if command == "neural":
+            return self.measure_neural_completion()
+        if command == "suite":
+            return self.measure_cargo_test_suite()
+        if command == "validate-wasm":
+            return self.run_binary(args["binary"])
+        raise ValueError(f"Unknown bridge command: {command}")
+
+
+FrontierBridge = RustBridge
+
 
 _bridge: RustBridge | None = None
 
