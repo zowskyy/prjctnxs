@@ -299,6 +299,7 @@ PATCHES = {
     "frontier-v2.0": "Integrate Frontier Syntax v2.0 innovations (7/7)",
     "improve-v2.0": "Apply Project Nexus v2.0 comprehensive improvements (7/7)",
     "quantum-leap-v2.5": "Apply Project Nexus v2.5 Quantum Leap — doubled performance (10×)",
+    "bridge-to-reality": "Bridge to frontier-syntax Rust implementation + vertical slice",
 }
 
 
@@ -408,6 +409,62 @@ def run_benchmark(name: str) -> int:
     return 1
 
 
+def run_verify_real() -> int:
+    """Verify with real Rust bridge, measured metrics, and vertical slice."""
+    from real_benchmarks import get_real_metrics, verify_metrics
+    from rust_bridge import get_bridge
+    from vertical_slice import run_vertical_slice
+
+    print("🔍 Running real implementation verification...")
+    print()
+
+    bridge = get_bridge()
+    try:
+        bridge.ensure_repo()
+    except FileNotFoundError as e:
+        print(f"❌ Bridge failed: {e}")
+        return 1
+
+    if not bridge.build():
+        print("❌ frontier-syntax build failed")
+        return 1
+    print("✅ Rust bridge operational")
+
+    health = bridge.health_check()
+    if not health.get("v2_pipeline_test"):
+        print("❌ v2 pipeline test failed")
+        return 1
+    print(f"✅ v2 pipeline test passed ({health['test_elapsed_sec']}s)")
+
+    metrics = get_real_metrics()
+    if metrics.get("source") != "measured":
+        print("❌ Metrics are not measured from Rust")
+        return 1
+    print(f"✅ Measured metrics (parse: {metrics.get('parse_per_sec', 0):.0f}/sec)")
+
+    if not verify_metrics(metrics, strict_measured=True):
+        return 1
+
+    print()
+    print("🧪 Testing vertical slice...")
+    if not run_vertical_slice("Create a function that adds two numbers"):
+        return 1
+
+    print()
+    print("✅ PROJECT NEXUS — REAL IMPLEMENTATION BRIDGE COMPLETE")
+    print("- frontier-syntax: Connected and compiling (submodule)")
+    print("- Bridge: Operational (rust_bridge.py)")
+    print("- Vertical Slice: Natural language → parse → WASM")
+    print("- Metrics: Measured from Rust (not hardcoded)")
+    print("- Version Stack: Collapsed (v2/v3 in archive/)")
+    return 0
+
+
+def run_bridge_patch() -> int:
+    """Apply bridge-to-reality patch: health check + vertical slice."""
+    return run_verify_real()
+
+
 def run_quantum_leap_verify() -> int:
     from quantum_leap_verify import (
         print_quantum_leap_report,
@@ -501,6 +558,8 @@ def run_patch(name: str) -> int:
         return run_improvements_verify()
     if name == "quantum-leap-v2.5":
         return run_quantum_leap_verify()
+    if name == "bridge-to-reality":
+        return run_bridge_patch()
     return 1
 
 
@@ -540,6 +599,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Verify Project Nexus v2.5 Quantum Leap (doubled performance)",
     )
+    parser.add_argument(
+        "--verify-real",
+        action="store_true",
+        help="Verify real Rust bridge, measured metrics, and vertical slice",
+    )
     parser.add_argument("--verify-patch", action="store_true", help="Verify v2.0 patch and generate certificate")
     parser.add_argument("--version", default="2.0", help="Patch version for --verify-patch")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable summary")
@@ -553,6 +617,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.verify_quantum_leap:
         return run_quantum_leap_verify()
+
+    if args.verify_real:
+        return run_verify_real()
 
     if args.verify_patch:
         return run_v2_verify_patch(args.version)

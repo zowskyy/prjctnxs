@@ -2,7 +2,7 @@
 
 **Self-hosted, AI-native development ecosystem — Cursor IDE written entirely in Frontier Syntax.**
 
-> Version: 2.5.0 (Quantum Leap)
+> Version: 2.5.1 (Real Implementation Bridge)
 
 > 🚀 ARC VERDICT: BUILDING CURSOR FROM SCRATCH IN FRONTIER
 
@@ -36,6 +36,13 @@ python3 build/arc_orchestrator.py --list
 
 # Frontier v2.0 — verify all 7 innovations
 python3 build/arc_orchestrator.py --verify
+
+# Real implementation bridge (frontier-syntax Rust submodule)
+python3 build/arc_orchestrator.py --patch bridge-to-reality
+python3 build/arc_orchestrator.py --verify-real
+python3 build/rust_bridge.py
+python3 build/vertical_slice.py "Create a function that adds two numbers"
+python3 build/real_benchmarks.py
 
 # Project Nexus v2.5 — Quantum Leap (doubled performance, 10× v1.0.1)
 python3 build/arc_orchestrator.py --patch quantum-leap-v2.5

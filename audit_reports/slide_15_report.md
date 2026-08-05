@@ -6,12 +6,12 @@
 | Gate | Measured | Target | Pass |
 |------|----------|--------|------|
 | Component Completeness | 10/10 | 10 IDE components | ✅ |
-| Self-Hosting | 14 .frontier files, 0 C++ files | Runs on Frontier / entirely .frontier | ✅ |
+| Self-Hosting | 13 .frontier files, 0 C++ files | Runs on Frontier / entirely .frontier | ✅ |
 | Performance | 144 FPS | ≥ 60 FPS UI | ✅ |
 | Hot-Reload | 20ms | < 100ms | ✅ |
 | Response Time | 4.2ms | < 10ms for AI (embedded) | ✅ |
 | Input Latency | 0.08ms | < 1ms / assert < 0.1ms poll | ✅ |
-| Memory | 28.8 MB | < 200MB | ✅ |
+| Memory | 28.7 MB | < 200MB | ✅ |
 | AI Accuracy | 94% | > 90% | ✅ |
 | Visual Quality | Sub-pixel rendering active | Sub-pixel rendering | ✅ |
 | Size | 38.0 MB | < 50MB | ✅ |

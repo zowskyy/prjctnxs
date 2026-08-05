@@ -12,4 +12,5 @@ build/artifacts/
 .idea/
 .vscode/
 *.swp
-frontier-syntax/
+# Legacy clone path at repo root (use external/frontier-syntax submodule)
+/frontier-syntax/

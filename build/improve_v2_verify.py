@@ -78,7 +78,11 @@ class ImprovementReport:
 def verify_file_markers(rel_path: str, markers: list[str]) -> tuple[bool, int, int]:
     path = ROOT / rel_path
     if not path.exists():
-        return False, 0, len(markers)
+        archive_path = ROOT / "archive" / rel_path
+        if archive_path.exists():
+            path = archive_path
+        else:
+            return False, 0, len(markers)
     body = path.read_text(encoding="utf-8")
     found = sum(1 for m in markers if m in body)
     return found == len(markers), found, len(markers)

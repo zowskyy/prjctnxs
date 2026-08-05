@@ -13,12 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 ORCH = ROOT / "build" / "arc_orchestrator.py"
 
 V3_FILES = [
-    "frontier/ai/neural_engine_v3.frontier",
-    "frontier/ai/language_model_v3.frontier",
-    "benchmark/spirits_within/rendering_v3.frontier",
-    "frontier/core/compiler_v3.frontier",
-    "src/security/security_v3.frontier",
-    "src/asset/network_v3.frontier",
+    "archive/frontier/ai/neural_engine_v3.frontier",
+    "archive/frontier/ai/language_model_v3.frontier",
+    "archive/benchmark/spirits_within/rendering_v3.frontier",
+    "archive/frontier/core/compiler_v3.frontier",
+    "archive/src/security/security_v3.frontier",
+    "archive/src/asset/network_v3.frontier",
     "benchmark/spirits_within/final_fantasy_visualizer_ultra.frontier",
 ]
 

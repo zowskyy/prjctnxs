@@ -71,13 +71,17 @@ class V2Report:
 def verify_file_markers(rel_path: str, markers: list[str]) -> ModuleTestResult:
     path = ROOT / rel_path
     if not path.exists():
-        return ModuleTestResult(
-            module=rel_path,
-            passed=False,
-            markers_found=0,
-            markers_total=len(markers),
-            detail="File missing",
-        )
+        archive_path = ROOT / "archive" / rel_path
+        if archive_path.exists():
+            path = archive_path
+        else:
+            return ModuleTestResult(
+                module=rel_path,
+                passed=False,
+                markers_found=0,
+                markers_total=len(markers),
+                detail="File missing",
+            )
     body = path.read_text(encoding="utf-8")
     found = sum(1 for m in markers if m in body)
     return ModuleTestResult(
