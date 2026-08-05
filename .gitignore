@@ -12,3 +12,4 @@ build/artifacts/
 .idea/
 .vscode/
 *.swp
+frontier-syntax/

@@ -2,7 +2,7 @@
 
 **Status:** PASSED ✅
 **Scripts:** 6/6
-**Duration:** 0.6ms
+**Duration:** 0.5ms
 
 | Script | Gate | Measured | Target | Pass |
 |--------|------|----------|--------|------|
@@ -56,6 +56,7 @@
 - `lip_sync.frontier`
 - `materials.frontier`
 - `optimization.frontier`
+- `rendering_v2.frontier`
 - `scene.frontier`
 - `volumetrics.frontier`
 

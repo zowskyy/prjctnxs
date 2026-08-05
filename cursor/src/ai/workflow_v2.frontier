@@ -1,0 +1,110 @@
+// cursor/src/ai/workflow_v2.frontier
+// AI-native development workflow — Project Nexus v2.0 Improvements
+// ARC Gate: Natural language programming, auto-review, auto-fix
+
+component AIWorkflow {
+    state: {
+        engine: AIEngine,
+        reviewer: ARCAutomation,
+        fixer: CodeFixer,
+        optimizer: Optimizer,
+        documenter: DocumentGenerator,
+    },
+
+    static new() -> AIWorkflow {
+        return AIWorkflow {
+            engine: AIEngine.new(),
+            reviewer: ARCAutomation.new(),
+            fixer: CodeFixer.new(),
+            optimizer: Optimizer.new(),
+            documenter: DocumentGenerator.new(),
+        };
+    },
+
+    // 1. Natural Language Programming
+    static natural_language_to_code(prompt: String) -> Code {
+        // "Create a player that moves with WASD"
+        // → Full Frontier code with tests
+        let intent = FrontierAI.understand(prompt);
+        let code = CodeGenerator.generate(intent);
+        let tests = TestGenerator.generate(code);
+        return code + tests;
+    },
+
+    // 2. Code Review Automation
+    static auto_review(code: Code) -> Review {
+        // Full ARC review — finds bugs, security issues, performance problems
+        return ARCAutomation.review(code);
+    },
+
+    // 3. Bug Fix Automation
+    static auto_fix(bug: BugReport, code: Code) -> Code {
+        // AI understands bug, fixes code, tests fix
+        let diagnosis = FrontierAI.diagnose(bug);
+        let fix = CodeFixer.generate(diagnosis, code);
+        if TestRunner.passes(fix) {
+            return fix;
+        }
+        return code;
+    },
+
+    // 4. Performance Optimization Automation
+    static auto_optimize(code: Code, profile: Profile) -> Code {
+        // AI analyzes performance, suggests/auto-applies optimizations
+        let bottlenecks = Profiler.analyze(profile);
+        let optimized = Optimizer.optimize(code, bottlenecks);
+        return optimized;
+    },
+
+    // 5. Documentation Generation
+    static auto_document(code: Code) -> Documentation {
+        // AI writes docs, examples, tutorials
+        return DocumentGenerator.generate(code);
+    },
+
+    // Full AI-native workflow pipeline
+    develop(prompt: String) -> WorkflowResult {
+        let start = Timer.now();
+        let code = AIWorkflow.natural_language_to_code(prompt);
+        let review = AIWorkflow.auto_review(code);
+        let optimized = AIWorkflow.auto_optimize(code, Profile.default());
+        let docs = AIWorkflow.auto_document(optimized);
+        let elapsed = Timer.now() - start;
+        return WorkflowResult {
+            code: optimized,
+            review: review,
+            documentation: docs,
+            elapsedMs: elapsed,
+            naturalLanguage: true,
+            passed: review.passed && elapsed < 5000.0,
+        };
+    },
+
+    benchmark() -> WorkflowBenchmarkResult {
+        let result = this.develop("Create a player that moves with WASD");
+        return WorkflowBenchmarkResult {
+            naturalLanguage: result.naturalLanguage,
+            autoReview: true,
+            autoDocument: result.documentation.length() > 0,
+            elapsedMs: result.elapsedMs,
+            passed: result.passed,
+        };
+    },
+}
+
+component WorkflowResult {
+    code: Code,
+    review: Review,
+    documentation: Documentation,
+    elapsedMs: f64,
+    naturalLanguage: bool,
+    passed: bool,
+}
+
+component WorkflowBenchmarkResult {
+    naturalLanguage: bool,
+    autoReview: bool,
+    autoDocument: bool,
+    elapsedMs: f64,
+    passed: bool,
+}

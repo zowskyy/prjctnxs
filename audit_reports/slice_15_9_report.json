@@ -2,7 +2,7 @@
   "slide": "15.9",
   "title": "Frontier Neural Engine (100% Native)",
   "passed": true,
-  "duration_ms": 0.24298999994698534,
+  "duration_ms": 0.26098800003637734,
   "components": [
     "frontier/ai/neural_engine.frontier"
   ],
@@ -43,5 +43,5 @@
       "detail": ""
     }
   ],
-  "timestamp": "2026-08-05T10:48:12Z"
+  "timestamp": "2026-08-05T11:10:00Z"
 }

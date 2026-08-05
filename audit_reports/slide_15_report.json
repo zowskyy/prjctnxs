@@ -2,7 +2,7 @@
   "slide": "15",
   "title": "CURSOR IDE \u2014 COMPLETE FRONTIER IMPLEMENTATION",
   "passed": true,
-  "duration_ms": 1.9618680000235145,
+  "duration_ms": 2.0252829999662936,
   "components": [
     "editor/core.frontier",
     "ai/engine.frontier",
@@ -26,7 +26,7 @@
     {
       "name": "Self-Hosting",
       "target": "Runs on Frontier / entirely .frontier",
-      "measured": "13 .frontier files, 0 C++ files",
+      "measured": "14 .frontier files, 0 C++ files",
       "passed": true,
       "detail": "Verified: no C++ external to the engine under cursor/"
     },
@@ -61,7 +61,7 @@
     {
       "name": "Memory",
       "target": "< 200MB",
-      "measured": "28.7 MB",
+      "measured": "28.8 MB",
       "passed": true,
       "detail": ""
     },
@@ -84,7 +84,7 @@
       "target": "< 50MB",
       "measured": "38.0 MB",
       "passed": true,
-      "detail": "Source total 36880 bytes; compact native estimate"
+      "detail": "Source total 40395 bytes; compact native estimate"
     },
     {
       "name": "A+ Hard Gate Manifest",
@@ -94,6 +94,6 @@
       "detail": ""
     }
   ],
-  "content_hash": "893d770241bbf9001c0a25a9f360f1dfa1878bae14333817f3cc9d4572d25370",
-  "timestamp": "2026-08-05T10:48:12Z"
+  "content_hash": "f22db49201074e43fd6fd4997b060bbe293c085af4949a19bd58e1cdf24eafda",
+  "timestamp": "2026-08-05T11:10:00Z"
 }

@@ -4,7 +4,7 @@
   "passed": true,
   "scripts_passed": 6,
   "scripts_total": 6,
-  "duration_ms": 0.5580509999845162,
+  "duration_ms": 0.5427090000011958,
   "components": [
     "benchmark.frontier",
     "character.frontier",
@@ -12,6 +12,7 @@
     "lip_sync.frontier",
     "materials.frontier",
     "optimization.frontier",
+    "rendering_v2.frontier",
     "scene.frontier",
     "volumetrics.frontier"
   ],
@@ -345,7 +346,7 @@
       "script": 6
     }
   ],
-  "timestamp": "2026-08-05T10:48:12Z",
+  "timestamp": "2026-08-05T11:10:00Z",
   "comparison": {
     "ff_tsw_2001_render": "90 min",
     "frontier_render": "16.6ms",
