@@ -1,0 +1,66 @@
+// src/security/zk_snarks.frontier
+// ZK-SNARK AST verification with Groth16 BN254 (Frontier v2.0)
+// Adapted from frontier-syntax/src/zk/verifier.rs
+
+component ZkVerifier {
+    state: {
+        provingKey: ProvingKey,
+        verifyingKey: VerifyingKey,
+        algorithm: String,
+    },
+
+    static setup() -> ZkVerifier {
+        let (pk, vk) = Groth16Bn254.setup(AstHashCircuit.empty());
+        return ZkVerifier {
+            provingKey: pk,
+            verifyingKey: vk,
+            algorithm: "Groth16-BN254",
+        };
+    },
+
+    prove(ast: JsonValue) -> ZkProofBundle {
+        let start = Timer.now();
+        let astBytes = Json.stringify(ast).asBytes();
+        let publicHash = HashUtils.sha3_256(astBytes);
+        let circuit = AstHashCircuit {
+            astBytes: Some(astBytes),
+            publicHash: FieldElement.fromHash(publicHash),
+        };
+        let proof = Groth16Bn254.prove(this.provingKey, circuit);
+        let elapsed = Timer.now() - start;
+        return ZkProofBundle {
+            proof: proof.serialize(),
+            publicHash: publicHash,
+            algorithm: this.algorithm,
+            generationMs: elapsed,
+        };
+    },
+
+    verify(bundle: ZkProofBundle) -> bool {
+        let start = Timer.now();
+        let proof = Groth16Bn254.Proof.deserialize(bundle.proof);
+        let publicInput = FieldElement.fromHash(bundle.publicHash);
+        let result = Groth16Bn254.verify(this.verifyingKey, proof, [publicInput]);
+        let elapsed = Timer.now() - start;
+        // ARC Gate: verification < 50ms
+        assert(elapsed < 50.0, "ZK verification exceeded 50ms gate");
+        return result;
+    },
+
+    static verifyGameState(ast: JsonValue, bundle: ZkProofBundle) -> bool {
+        let verifier = ZkVerifier.setup();
+        return verifier.verify(bundle);
+    },
+}
+
+component ZkProofBundle {
+    proof: Bytes,
+    publicHash: String,
+    algorithm: String,
+    generationMs: f64,
+}
+
+component AstHashCircuit {
+    astBytes: Option<Bytes>,
+    publicHash: FieldElement,
+}

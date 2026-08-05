@@ -1,0 +1,59 @@
+// cursor/src/ai/context.frontier
+// Neural LSP context window management (Frontier v2.0)
+// Adapted from frontier-syntax/src/neural/completion.rs context handling
+
+component NeuralContext {
+    state: {
+        windowSize: usize,
+        tokens: Vec<Token>,
+        source: String,
+        cursor: usize,
+        intent: String,
+    },
+
+    static new(windowSize: usize) -> NeuralContext {
+        return NeuralContext {
+            windowSize: windowSize,
+            tokens: [],
+            source: "",
+            cursor: 0,
+            intent: "expression",
+        };
+    },
+
+    update(source: String, cursor: usize) {
+        this.source = source;
+        this.cursor = cursor;
+        this.tokens = Lexer.tokenize(source);
+        this.intent = NeuralCompletion.new(16).analyzeIntent(
+            source.substring(0, cursor.min(source.length()))
+        );
+    },
+
+    getContextWindow() -> String {
+        let start = this.cursor.saturating_sub(this.windowSize * 4);
+        let end = (this.cursor + this.windowSize * 2).min(this.source.length());
+        return this.source.substring(start, end);
+    },
+
+    getIntent() -> String {
+        return this.intent;
+    },
+
+    getSurroundingLines(line: usize, radius: usize) -> Vec<String> {
+        let lines = this.source.lines();
+        let start = line.saturating_sub(radius);
+        let end = (line + radius + 1).min(lines.length());
+        return lines.slice(start, end);
+    },
+
+    getSymbolContext(symbols: SymbolTable, position: (usize, usize)) -> Vec<Symbol> {
+        return symbols.near(position, this.windowSize);
+    },
+
+    buildPrompt() -> String {
+        return "Intent: " + this.intent + "\n" +
+               "Context:\n" + this.getContextWindow() + "\n" +
+               "Cursor: " + this.cursor.toString();
+    },
+}

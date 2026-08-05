@@ -2,7 +2,7 @@
   "slide": "15.12",
   "title": "Purge All Third-Party Dependencies",
   "passed": true,
-  "duration_ms": 7.391073000007964,
+  "duration_ms": 14.715039000009256,
   "components": [
     "frontier/ai/neural_engine.frontier",
     "frontier/ai/language_model.frontier",
@@ -95,5 +95,5 @@
       "detail": ""
     }
   ],
-  "timestamp": "2026-08-05T05:46:03Z"
+  "timestamp": "2026-08-05T10:48:12Z"
 }

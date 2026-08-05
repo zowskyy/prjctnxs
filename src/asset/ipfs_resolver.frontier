@@ -1,0 +1,84 @@
+// src/asset/ipfs_resolver.frontier
+// IPFS import resolution with gateway fetch support (Frontier v2.0)
+// Adapted from frontier-syntax/src/ipfs/resolver.rs
+
+component IpfsImportResolver {
+    state: {
+        imports: Vec<String>,
+        cache: HashMap<String, Bytes>,
+        gateway: String,
+        timeoutSecs: u32,
+    },
+
+    static IPFS_PREFIX: String = "ipfs://",
+
+    static new() -> IpfsImportResolver {
+        return IpfsImportResolver {
+            imports: [],
+            cache: HashMap.new(),
+            gateway: "https://ipfs.io/ipfs/",
+            timeoutSecs: 10,
+        };
+    },
+
+    static withGateway(gateway: String) -> IpfsImportResolver {
+        let resolver = IpfsImportResolver.new();
+        resolver.gateway = gateway;
+        return resolver;
+    },
+
+    resolveImport(path: String, alias: String) -> Result<(), String> {
+        if !path.startsWith(IpfsImportResolver.IPFS_PREFIX) {
+            return Err("Invalid IPFS path: " + path);
+        }
+        let cid = path.substring(IpfsImportResolver.IPFS_PREFIX.length());
+        if cid.isEmpty() {
+            return Err("Empty IPFS CID");
+        }
+        this.imports.push(alias + "=" + path);
+        return Ok(());
+    },
+
+    fetchCid(cid: String) -> Result<Bytes, String> {
+        if this.cache.contains(cid) {
+            return Ok(this.cache.get(cid));
+        }
+        let url = this.gateway + cid;
+        let response = HttpClient.get(url, this.timeoutSecs);
+        if !response.ok() {
+            return Err("IPFS gateway request failed: " + response.status());
+        }
+        let bytes = response.body();
+        this.cache.insert(cid, bytes);
+        return Ok(bytes);
+    },
+
+    resolveVersionCid(content: String) -> String {
+        let hash = HashUtils.sha3_256(content);
+        return "Qm" + hash.substring(0, 44);
+    },
+
+    getImports() -> Vec<String> {
+        return this.imports;
+    },
+
+    cacheSize() -> usize {
+        return this.cache.size();
+    },
+
+    static loadAsset(path: String) -> Result<Bytes, String> {
+        let resolver = IpfsImportResolver.new();
+        if path.startsWith(IpfsImportResolver.IPFS_PREFIX) {
+            let cid = path.substring(IpfsImportResolver.IPFS_PREFIX.length());
+            let start = Timer.now();
+            let result = resolver.fetchCid(cid);
+            let elapsed = Timer.now() - start;
+            // ARC Gate: cached resolution < 500ms
+            if resolver.cache.contains(cid) {
+                assert(elapsed < 500.0, "Cached IPFS resolution exceeded 500ms gate");
+            }
+            return result;
+        }
+        return Err("Not an IPFS path: " + path);
+    },
+}
