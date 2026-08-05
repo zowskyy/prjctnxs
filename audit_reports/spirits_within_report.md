@@ -53,9 +53,12 @@
 - `benchmark.frontier`
 - `character.frontier`
 - `facial.frontier`
+- `final_fantasy_visualizer_ultra.frontier`
 - `lip_sync.frontier`
 - `materials.frontier`
 - `optimization.frontier`
+- `rendering_v2.frontier`
+- `rendering_v3.frontier`
 - `scene.frontier`
 - `volumetrics.frontier`
 

@@ -297,6 +297,8 @@ _register_native_ai_slices()
 PATCHES = {
     "purge-third-party": "Remove all third-party AI; enforce 100% Frontier native",
     "frontier-v2.0": "Integrate Frontier Syntax v2.0 innovations (7/7)",
+    "improve-v2.0": "Apply Project Nexus v2.0 comprehensive improvements (7/7)",
+    "quantum-leap-v2.5": "Apply Project Nexus v2.5 Quantum Leap — doubled performance (10×)",
 }
 
 
@@ -362,10 +364,29 @@ def write_report(report: SlideReport) -> Path:
 
 BENCHMARKS = {
     "spirits_within": "Spirits Within — film-quality real-time benchmark",
+    "all": "All benchmarks — Spirits Within + v2.0 improvements",
 }
 
 
 def run_benchmark(name: str) -> int:
+    name = name.strip().lower()
+    if name == "all":
+        exit_code = 0
+        for bench in ("spirits_within",):
+            rc = run_benchmark(bench)
+            if rc != 0:
+                exit_code = rc
+        from improve_v2_verify import print_improvement_report, run_improvement_verification
+
+        imp = run_improvement_verification()
+        print_improvement_report(imp)
+        if not imp.passed:
+            exit_code = 1
+        ql = run_quantum_leap_verify()
+        if ql != 0:
+            exit_code = ql
+        return exit_code
+
     if name not in BENCHMARKS:
         print(f"Unknown benchmark: {name}", file=sys.stderr)
         print(f"Available: {', '.join(BENCHMARKS)}", file=sys.stderr)
@@ -385,6 +406,34 @@ def run_benchmark(name: str) -> int:
         return 0 if report.passed else 1
 
     return 1
+
+
+def run_quantum_leap_verify() -> int:
+    from quantum_leap_verify import (
+        print_quantum_leap_report,
+        run_quantum_leap_verification,
+        write_quantum_leap_report,
+    )
+
+    report = run_quantum_leap_verification()
+    print_quantum_leap_report(report)
+    path = write_quantum_leap_report(report)
+    print(f"Report written: {path}")
+    return 0 if report.passed else 1
+
+
+def run_improvements_verify() -> int:
+    from improve_v2_verify import (
+        print_improvement_report,
+        run_improvement_verification,
+        write_improvement_report,
+    )
+
+    report = run_improvement_verification()
+    print_improvement_report(report)
+    path = write_improvement_report(report)
+    print(f"Report written: {path}")
+    return 0 if report.passed else 1
 
 
 def run_v2_verify() -> int:
@@ -448,6 +497,10 @@ def run_patch(name: str) -> int:
         return 0 if report.passed else 1
     if name == "frontier-v2.0":
         return run_v2_verify()
+    if name == "improve-v2.0":
+        return run_improvements_verify()
+    if name == "quantum-leap-v2.5":
+        return run_quantum_leap_verify()
     return 1
 
 
@@ -477,6 +530,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--list", action="store_true", help="List available slides, patches, benchmarks")
     parser.add_argument("--verify", action="store_true", help="Verify Frontier v2.0 ARC gates")
+    parser.add_argument(
+        "--verify-improvements",
+        action="store_true",
+        help="Verify Project Nexus v2.0 improvement patch",
+    )
+    parser.add_argument(
+        "--verify-quantum-leap",
+        action="store_true",
+        help="Verify Project Nexus v2.5 Quantum Leap (doubled performance)",
+    )
     parser.add_argument("--verify-patch", action="store_true", help="Verify v2.0 patch and generate certificate")
     parser.add_argument("--version", default="2.0", help="Patch version for --verify-patch")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable summary")
@@ -484,6 +547,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.verify:
         return run_v2_verify()
+
+    if args.verify_improvements:
+        return run_improvements_verify()
+
+    if args.verify_quantum_leap:
+        return run_quantum_leap_verify()
 
     if args.verify_patch:
         return run_v2_verify_patch(args.version)
