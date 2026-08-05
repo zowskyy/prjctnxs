@@ -8,7 +8,7 @@ SUBMODULE="${ROOT}/external/frontier-syntax"
 echo "🚀 Five-Star Submodule Push — frontier-syntax"
 echo "   Root: ${ROOT}"
 
-if [[ ! -d "${SUBMODULE}/.git" ]]; then
+if [[ ! -e "${SUBMODULE}/.git" ]]; then
   echo "❌ Submodule not initialized. Run: git submodule update --init --recursive"
   exit 1
 fi
