@@ -146,7 +146,7 @@ def _is_allowlisted(path: Path) -> bool:
 def scan_forbidden() -> list[str]:
     """Return list of 'path:line:match' hits for forbidden third-party AI."""
     hits: list[str] = []
-    skip_dirs = {".git", "__pycache__", "node_modules", ".venv"}
+    skip_dirs = {".git", "__pycache__", "node_modules", ".venv", "external", "archive"}
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue

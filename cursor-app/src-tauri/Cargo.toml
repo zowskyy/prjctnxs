@@ -1,0 +1,25 @@
+[package]
+name = "cursor-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Project Nexus IDE — Tauri desktop shell"
+build = "build.rs"
+
+[lib]
+name = "cursor_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+nexus-runtime = { path = "../../engine/nexus-runtime" }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

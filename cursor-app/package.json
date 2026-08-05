@@ -1,0 +1,25 @@
+{
+  "name": "cursor-app",
+  "version": "3.0.0",
+  "description": "Project Nexus IDE — Tauri + CodeMirror shell",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@tauri-apps/api": "^2.2.0",
+    "codemirror": "^6.0.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.2.7",
+    "vite": "^5.4.14"
+  }
+}

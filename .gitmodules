@@ -1,0 +1,3 @@
+[submodule "external/frontier-syntax"]
+	path = external/frontier-syntax
+	url = https://github.com/zowskyy/frontier-syntax

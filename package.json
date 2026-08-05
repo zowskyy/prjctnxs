@@ -1,19 +1,24 @@
 {
   "name": "project-nexus",
-  "version": "0.1.0",
-  "description": "Project Nexus — Cursor IDE written entirely in Frontier Syntax",
+  "version": "3.0.0",
+  "description": "Project Nexus — game engine + Cursor IDE in Frontier Syntax",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zowskyy/project-nexus"
+    "url": "https://github.com/zowskyy/prjctnxs"
   },
   "scripts": {
     "verify": "python3 build/arc_orchestrator.py --slides 15",
+    "verify-all": "python3 build/arc_orchestrator.py --verify-all",
     "benchmark": "python3 build/arc_orchestrator.py --benchmark spirits_within",
     "purge": "python3 build/arc_orchestrator.py --patch purge-third-party",
     "native-ai": "python3 build/arc_orchestrator.py --slides 15.9,15.10,15.11,15.12",
     "test": "python3 -m unittest discover -s tests -v",
-    "orchestrate": "python3 build/arc_orchestrator.py --slides 15"
+    "orchestrate": "python3 build/arc_orchestrator.py --slides 15",
+    "build:rust": "cargo build --release --workspace",
+    "build:frontend": "npm --prefix cursor-app install && npm --prefix cursor-app run build",
+    "build": "npm run build:frontend && npm run build:rust",
+    "bootstrap": "git submodule update --init --recursive && npm run build"
   },
   "frontier": {
     "ide": "cursor/",

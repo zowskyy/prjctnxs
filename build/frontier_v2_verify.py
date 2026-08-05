@@ -10,6 +10,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+from validator import UnifiedValidator
+
+_validator = UnifiedValidator(ROOT)
+
 INNOVATIONS = [
     ("Self-mutating grammar", "frontier/grammar/mutator.frontier", ["GrammarMutator", "adaptToWorkload"]),
     ("Proof-carrying code", "src/security/proof_carrying.frontier", ["ProofGenerator", "generateCoq"]),
@@ -69,23 +73,13 @@ class V2Report:
 
 
 def verify_file_markers(rel_path: str, markers: list[str]) -> ModuleTestResult:
-    path = ROOT / rel_path
-    if not path.exists():
-        return ModuleTestResult(
-            module=rel_path,
-            passed=False,
-            markers_found=0,
-            markers_total=len(markers),
-            detail="File missing",
-        )
-    body = path.read_text(encoding="utf-8")
-    found = sum(1 for m in markers if m in body)
+    ok, found, total = _validator.verify_structural(rel_path, markers)
     return ModuleTestResult(
         module=rel_path,
-        passed=found == len(markers),
+        passed=ok,
         markers_found=found,
-        markers_total=len(markers),
-        detail=f"{found}/{len(markers)} markers",
+        markers_total=total,
+        detail=f"{found}/{total} markers",
     )
 
 

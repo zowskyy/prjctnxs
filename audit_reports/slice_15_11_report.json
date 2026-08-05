@@ -2,7 +2,7 @@
   "slide": "15.11",
   "title": "Frontier AI Applications (100% Native)",
   "passed": true,
-  "duration_ms": 0.21592100029010908,
+  "duration_ms": 0.18183999964094255,
   "components": [
     "frontier/ai/applications.frontier",
     "frontier/ai/training.frontier"
@@ -51,5 +51,5 @@
       "detail": ""
     }
   ],
-  "timestamp": "2026-08-05T11:17:30Z"
+  "timestamp": "2026-08-05T14:48:33Z"
 }

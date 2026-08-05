@@ -1,0 +1,20 @@
+[package]
+name = "nexus-runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Project Nexus game engine runtime — ECS, game loop, scripting"
+build = "build.rs"
+
+[lib]
+name = "nexus_runtime"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nexus-bench"
+path = "src/bin/nexus_bench.rs"
+
+[dependencies]
+frontier = { path = "../../external/frontier-syntax" }
+
+[dev-dependencies]

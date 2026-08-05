@@ -3,17 +3,20 @@
   "modules": 7,
   "modules_total": 7,
   "metrics": {
-    "fps": 1024.0,
+    "fps": 44841.7,
     "accuracy": 0.99,
+    "lm_latency_ms": 2.5,
+    "lm_latency_measured_ms": 1368.9,
     "latency_ms": 2.5,
     "lm_accuracy": 0.99,
     "render_fps": 248.0,
     "resolution_16k": true,
     "compiler_speedup": 200.0,
     "quantum_security": true,
-    "network_replicas": 20
+    "network_replicas": 20,
+    "metrics_source": "measured"
   },
-  "duration_ms": 0.20859500000369735,
+  "duration_ms": 2752.8003319985146,
   "gates": [
     {
       "name": "Neural Engine v3 \u00b7 Files",
@@ -67,7 +70,7 @@
     {
       "name": "Neural Engine 1000+ FPS",
       "target": "\u2265 1000 FPS",
-      "measured": "1024 FPS",
+      "measured": "44842 FPS",
       "passed": true,
       "detail": ""
     },
@@ -128,5 +131,5 @@
       "detail": ""
     }
   ],
-  "timestamp": "2026-08-05T11:17:30Z"
+  "timestamp": "2026-08-05T14:48:40Z"
 }

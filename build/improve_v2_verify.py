@@ -10,6 +10,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+from validator import UnifiedValidator
+
+_validator = UnifiedValidator(ROOT)
+
 IMPROVEMENTS = [
     (
         "Neural Engine 2.0",
@@ -76,12 +80,7 @@ class ImprovementReport:
 
 
 def verify_file_markers(rel_path: str, markers: list[str]) -> tuple[bool, int, int]:
-    path = ROOT / rel_path
-    if not path.exists():
-        return False, 0, len(markers)
-    body = path.read_text(encoding="utf-8")
-    found = sum(1 for m in markers if m in body)
-    return found == len(markers), found, len(markers)
+    return _validator.verify_structural(rel_path, markers)
 
 
 def measure_neural_engine() -> ImprovementGate:

@@ -12,4 +12,10 @@ build/artifacts/
 .idea/
 .vscode/
 *.swp
-frontier-syntax/
+/target/
+external/frontier-syntax/target/
+cursor-app/dist/
+cursor-app/node_modules/
+cursor-app/src-tauri/target/
+# Legacy clone path at repo root (use external/frontier-syntax submodule)
+/frontier-syntax/

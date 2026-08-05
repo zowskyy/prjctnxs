@@ -13,13 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 ORCH = ROOT / "build" / "arc_orchestrator.py"
 
 IMPROVEMENT_FILES = [
-    "frontier/ai/neural_engine_v2.frontier",
-    "frontier/ai/language_model_v2.frontier",
-    "benchmark/spirits_within/rendering_v2.frontier",
-    "frontier/core/compiler_v2.frontier",
-    "src/security/security_v2.frontier",
-    "cursor/src/ai/workflow_v2.frontier",
-    "src/asset/network_v2.frontier",
+    "archive/frontier/ai/neural_engine_v2.frontier",
+    "archive/frontier/ai/language_model_v2.frontier",
+    "archive/benchmark/spirits_within/rendering_v2.frontier",
+    "archive/frontier/core/compiler_v2.frontier",
+    "archive/src/security/security_v2.frontier",
+    "archive/cursor/src/ai/workflow_v2.frontier",
+    "archive/src/asset/network_v2.frontier",
 ]
 
 
