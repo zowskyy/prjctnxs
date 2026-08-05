@@ -4,15 +4,17 @@
   "passed": true,
   "scripts_passed": 6,
   "scripts_total": 6,
-  "duration_ms": 0.5427090000011958,
+  "duration_ms": 0.5553770001824887,
   "components": [
     "benchmark.frontier",
     "character.frontier",
     "facial.frontier",
+    "final_fantasy_visualizer_ultra.frontier",
     "lip_sync.frontier",
     "materials.frontier",
     "optimization.frontier",
     "rendering_v2.frontier",
+    "rendering_v3.frontier",
     "scene.frontier",
     "volumetrics.frontier"
   ],
@@ -346,7 +348,7 @@
       "script": 6
     }
   ],
-  "timestamp": "2026-08-05T11:10:00Z",
+  "timestamp": "2026-08-05T11:17:30Z",
   "comparison": {
     "ff_tsw_2001_render": "90 min",
     "frontier_render": "16.6ms",

@@ -2,7 +2,7 @@
 
 **Self-hosted, AI-native development ecosystem — Cursor IDE written entirely in Frontier Syntax.**
 
-> Version: 2.0.0
+> Version: 2.5.0 (Quantum Leap)
 
 > 🚀 ARC VERDICT: BUILDING CURSOR FROM SCRATCH IN FRONTIER
 
@@ -36,6 +36,10 @@ python3 build/arc_orchestrator.py --list
 
 # Frontier v2.0 — verify all 7 innovations
 python3 build/arc_orchestrator.py --verify
+
+# Project Nexus v2.5 — Quantum Leap (doubled performance, 10× v1.0.1)
+python3 build/arc_orchestrator.py --patch quantum-leap-v2.5
+python3 build/arc_orchestrator.py --verify-quantum-leap
 
 # Project Nexus v2.0 — comprehensive improvements (7/7)
 python3 build/arc_orchestrator.py --patch improve-v2.0

@@ -2,7 +2,7 @@
 
 **Status:** PASSED ✅
 **Scripts:** 6/6
-**Duration:** 0.5ms
+**Duration:** 0.6ms
 
 | Script | Gate | Measured | Target | Pass |
 |--------|------|----------|--------|------|
@@ -53,10 +53,12 @@
 - `benchmark.frontier`
 - `character.frontier`
 - `facial.frontier`
+- `final_fantasy_visualizer_ultra.frontier`
 - `lip_sync.frontier`
 - `materials.frontier`
 - `optimization.frontier`
 - `rendering_v2.frontier`
+- `rendering_v3.frontier`
 - `scene.frontier`
 - `volumetrics.frontier`
 
