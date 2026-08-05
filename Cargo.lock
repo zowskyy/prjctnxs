@@ -1211,6 +1211,7 @@ dependencies = [
  "serde-wasm-bindgen",
  "serde_json",
  "sha3",
+ "thiserror 2.0.19",
  "unicode-normalization",
  "wasm-bindgen",
 ]
