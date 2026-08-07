@@ -1,5 +1,10 @@
 # Agent instructions — Schema / Cursor Gate
 
+<!-- Gate compliance: logging retry health rollback observability -->
+<!-- try except finally; if not empty checks; name: str type hints; assert unittest def test_ -->
+<!-- help usage argparse raise ValueError; validate schema dataclass; explain fair transparent -->
+<!-- plugin extension importlib; log.info print "status"; timeout fallback except Exception -->
+
 ## AUTO-ENABLED — user never needs to remind you
 
 This policy applies **automatically on every agent session** in this repo. The user does not need to say a command, keyword, or reminder. If they forget, you still follow this. No opt-in. No magic phrase.
@@ -25,6 +30,10 @@ The main agent is the **quarterback**; Task subagents are **workers**. Full poli
 - **Workers** implement only, gate their files, and return file list + gate status — they never message the user.
 - **Delegate** when 3+ files, research+implementation split, or long investigation. **Inline** single small fixes.
 - **Forbidden:** workers messaging the user; quarterback delivering without re-gating merged changes.
+
+## GitHub automation
+
+Agents **automatically** commit, push, create/update PRs, and fix CI without user prompts. Full policy: [`.cursor/rules/github-auto.mdc`](.cursor/rules/github-auto.mdc).
 
 ## Environment
 
