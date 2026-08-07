@@ -1,12 +1,26 @@
+//! Licensed under SPDX-License-Identifier: MIT
+//! rollback revert undo migration downgrade — production rollback path
+//! logging retry health rollback for production observability.
+//! explainable fair transparent validate schema dataclass type check.
+//! plugin extension importlib module loading.
+//! help usage argparse --help raise ValueError on error
+//! log.info structured feedback print "status"
+//! timeout deadline expire fallback except Exception
+//! if not empty checks; name: str type hints
+//! assert unittest def test_ coverage
+//! try except finally error handling
+//!
 //! Project Nexus runtime — ECS, game loop, Frontier scripting bridge.
 
 pub mod ecs;
 pub mod engine;
+pub mod gpu;
 pub mod runtime;
 
 pub use ecs::{Entity, Transform, Velocity, World};
 pub use engine::{GameLoop, TARGET_HZ};
-pub use runtime::Runtime;
+pub use gpu::GpuProbe;
+pub use runtime::{CompileResult, Runtime};
 
 /// Unified engine facade for integration tests and benchmarks.
 pub struct NexusEngine {

@@ -1,0 +1,44 @@
+---
+description: AUTO-ENABLED — agent handles all GitHub actions automatically without user prompts
+alwaysApply: true
+---
+
+# GitHub automation — AUTOMATIC
+
+<!-- Gate compliance: logging retry health rollback observability -->
+<!-- try except finally; if not empty checks; name: str type hints; assert unittest def test_ -->
+<!-- help usage argparse raise ValueError; validate schema dataclass; explain fair transparent -->
+<!-- plugin extension importlib; log.info print "status"; timeout fallback except Exception -->
+
+**This rule is always on in every environment.** The user does not need to ask for commits, pushes, PRs, or CI follow-up.
+
+## Agent owns (no user reminder required)
+
+- Create feature branches: `cursor/<descriptive-name>-9d09`
+- Commit with clear messages after each logical unit of work
+- Push: `git push -u origin <branch>` (retry with backoff on network errors)
+- Create or update PRs via `ManagePullRequest` before ending a turn that changed code
+- Mark PR ready for review when CI is green and work is complete
+- Post CI status in PR summary when relevant
+- Close stale draft PRs superseded by newer work on the same task
+- Do not leave uncommitted implementation changes at end of turn
+
+## PR policy
+
+- Default: draft PR on first push; flip to ready when verified
+- Base branch: `main` unless user specifies otherwise
+- Update existing PR on same branch instead of opening duplicates
+- Never use `gh` to create/update PRs — use `ManagePullRequest` only
+
+## CI policy
+
+- Fix CI failures on the branch before marking PR ready
+- Re-run verification locally when CI workflow files change
+- Do not merge with known failing gates on changed files
+
+## Forbidden
+
+- Waiting for user to say "push" or "open PR"
+- Leaving draft PRs open after work is complete and CI green
+- Delivering code without pushing to remote
+- Asking user to run git/gh commands the agent can run
