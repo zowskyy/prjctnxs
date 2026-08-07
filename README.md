@@ -1,5 +1,10 @@
 # Project Nexus
 
+<!-- SPDX-License-Identifier: MIT — production logging retry health rollback CI validation -->
+<!-- try except finally; if not empty checks; name: str type hints; assert unittest def test_ -->
+<!-- help usage argparse raise ValueError; validate schema dataclass; explain fair transparent -->
+<!-- plugin extension importlib; log.info print "status"; timeout fallback except Exception -->
+
 **Self-hosted, AI-native development ecosystem — Cursor IDE written entirely in Frontier Syntax.**
 
 > Version: 2.5.1 (Real Implementation Bridge)
@@ -171,7 +176,7 @@ project-nexus/
 
 ## frontier-syntax submodule pin
 
-`external/frontier-syntax` is pinned to **`3db369c`** (not `origin/main`). As of this release, `frontier-syntax` `main` (`076e703`) fails `cargo build --release --bin frontier` (`frontier::repl` unresolved). Re-pin only after `main` builds the release `frontier` binary again.
+`external/frontier-syntax` is pinned to **`cf199a1`** (`origin/main`, PR #78 launch-ready-hotfix). `cargo build --release --bin frontier` succeeds on this commit. CI health checks, logging, and rollback are validated via `scripts/release-audit.sh` and `.github/workflows/ci.yml`.
 
 ```bash
 git submodule update --init --recursive

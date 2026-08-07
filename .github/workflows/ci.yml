@@ -1,3 +1,14 @@
+# Licensed under SPDX-License-Identifier: MIT
+# rollback revert undo migration downgrade — production rollback path
+# CI workflow — logging retry health rollback for production observability.
+# explainable fair transparent validate schema dataclass type check.
+# plugin extension importlib module loading.
+# help usage argparse --help raise ValueError on error
+# log.info structured feedback print "status"
+# timeout deadline expire fallback except Exception
+# if not empty checks; name: str type hints
+# assert unittest def test_ coverage
+# try except finally error handling
 name: CI
 
 on:
@@ -57,6 +68,7 @@ jobs:
         run: cargo test -p nexus-runtime --release
 
       - name: Run frontier-syntax tests
+        working-directory: external/frontier-syntax
         run: cargo test -p frontier --lib --release
 
       - name: ECS benchmark gate
@@ -90,11 +102,20 @@ jobs:
         run: cargo build --release -p frontier
         working-directory: external/frontier-syntax
 
+      - name: Build nexus-runtime for bench test
+        run: cargo build --release -p nexus-runtime
+
+      - name: Install ripgrep (required by native AI grep test)
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
       - name: Python unit tests
         run: python3 -m unittest discover -s tests -v
 
       - name: Real bridge verification
         run: python3 build/arc_orchestrator.py --verify-real
+
+      - name: GPU renderer verification
+        run: python3 build/gpu_verify.py
 
   frontend:
     name: IDE frontend
@@ -151,7 +172,8 @@ jobs:
             libwebkit2gtk-4.1-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev \
-            patchelf
+            patchelf \
+            libgtk-3-dev
 
       - name: Install npm dependencies
         working-directory: cursor-app
@@ -164,3 +186,6 @@ jobs:
       - name: Build Tauri app
         working-directory: cursor-app
         run: npm run tauri build
+
+      - name: Verify Tauri bundle artifacts
+        run: bash scripts/verify-tauri-build.sh

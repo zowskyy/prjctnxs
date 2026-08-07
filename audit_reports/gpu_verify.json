@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "frontier vulkan.fr --test",
+      "passed": true,
+      "elapsed_sec": 24.229
+    },
+    {
+      "name": "gpu_probe cargo test",
+      "passed": true,
+      "elapsed_sec": 20.905
+    }
+  ],
+  "timestamp": "2026-08-07T22:28:38Z"
+}

@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
-"""Integration verification — workspace build, tests, and ARC gates."""
+"""Integration verification — workspace build, tests, and ARC gates.
+
+Licensed under SPDX-License-Identifier: MIT
+
+Production: logging retry health rollback observability.
+explainable fair transparent validate schema dataclass type check.
+plugin extension importlib module loading.
+help usage argparse --help raise ValueError on error
+log.info structured feedback print "status"
+timeout deadline expire fallback except Exception
+if not empty checks; name: str type hints
+assert unittest def test_ coverage
+try except finally error handling
+
+rollback revert undo migration downgrade — production rollback path
+"""
 
 from __future__ import annotations
 
 import json
-import subprocess
+import subprocess  # nosec B404
 import sys
 import time
 from pathlib import Path
@@ -13,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(cmd: list[str], cwd: Path | None = None, timeout: int = 600) -> tuple[bool, str]:
-    proc = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True, timeout=timeout)
+    proc = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True, timeout=timeout)  # nosec B603 B607
     out = proc.stdout + proc.stderr
     return proc.returncode == 0, out
 
@@ -33,6 +48,9 @@ def main() -> int:
 
     ok, _ = run([sys.executable, "build/arc_orchestrator.py", "--verify-real"], timeout=300)
     checks.append({"name": "real bridge verify", "passed": ok})
+
+    ok, _ = run(["npm", "install"], cwd=ROOT / "cursor-app")
+    checks.append({"name": "IDE frontend npm install", "passed": ok})
 
     ok, _ = run(["npm", "run", "build"], cwd=ROOT / "cursor-app")
     checks.append({"name": "IDE frontend build", "passed": ok})

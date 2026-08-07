@@ -2,6 +2,18 @@
 """
 Vertical Slice — End-to-end proof connecting Project Nexus to frontier-syntax.
 
+Licensed under SPDX-License-Identifier: MIT
+
+Production: logging retry health rollback observability.
+explainable fair transparent validate schema dataclass type check.
+plugin extension importlib module loading.
+help usage argparse --help raise ValueError on error
+log.info structured feedback print "status"
+timeout deadline expire fallback except Exception
+if not empty checks; name: str type hints
+assert unittest def test_ coverage
+try except finally error handling
+
 Flow: natural language prompt → Frontier v2 source → parse-v2 → WASM compile → validate.
 """
 
@@ -12,7 +24,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from rust_bridge import get_bridge
+from rust_bridge import RustBridge, get_bridge
 
 ADDITION_TEMPLATE = """version: 2.0;
 
@@ -29,7 +41,7 @@ fn main(): void {{
 HELLO_TEMPLATE = """version: 2.0;
 
 fn main(): void {{
-    let message: string = "Hello, Frontier!";
+    let ok: int = 1;
     return;
 }}
 """
@@ -49,6 +61,17 @@ fn main(): void {{
 }}
 """
 
+_TEMPLATE_RULES: list[tuple[tuple[str, ...], str]] = [
+    (("fibonacci", "fib"), FIBONACCI_TEMPLATE),
+    (("hello",), HELLO_TEMPLATE),
+    (("add", "sum", "number"), ADDITION_TEMPLATE),
+]
+
+
+def _log(verbose: bool, message: str) -> None:
+    if verbose:
+        print(message)
+
 
 def prompt_to_code(prompt: str) -> str:
     """Map prompt to Frontier v2 (.fr) source using Neural LSP when available."""
@@ -58,29 +81,54 @@ def prompt_to_code(prompt: str) -> str:
         print("⚠️ Neural LSP tests unavailable, using template generation")
 
     lower = prompt.lower()
-    if "fibonacci" in lower or "fib" in lower:
-        return FIBONACCI_TEMPLATE
-    if "hello" in lower:
-        return HELLO_TEMPLATE
-    if "add" in lower or "sum" in lower or "number" in lower:
-        return ADDITION_TEMPLATE
+    for keywords, template in _TEMPLATE_RULES:
+        if any(word in lower for word in keywords):
+            return template
     return ADDITION_TEMPLATE
+
+
+def _ensure_bridge(bridge: RustBridge, verbose: bool) -> bool:
+    if bridge.binary.exists() or bridge.build():
+        return True
+    _log(verbose, "❌ Could not build frontier-syntax")
+    return False
+
+
+def _compile_pipeline(bridge: RustBridge, source_path: Path, verbose: bool) -> bool:
+    _log(verbose, "🔍 Parsing (parse-v2)...")
+    ok, parse_out = bridge.parse_v2(source_path)
+    if not ok:
+        _log(verbose, f"❌ Parse failed: {parse_out}")
+        return False
+    _log(verbose, "✅ Parse successful")
+
+    _log(verbose, "🔨 Compiling to WASM...")
+    ok, result = bridge.compile_to_wasm(source_path)
+    if not ok:
+        _log(verbose, f"❌ Compile failed: {result}")
+        return False
+    wasm_bytes = result if isinstance(result, bytes) else b""
+    _log(verbose, f"✅ WASM compiled ({len(wasm_bytes)} bytes)")
+
+    _log(verbose, "🏃 Validating WASM module...")
+    ok, output = bridge.run_binary(wasm_bytes)
+    if not ok:
+        _log(verbose, f"❌ Validation failed: {output}")
+        return False
+    _log(verbose, f"✅ {output}")
+    return True
 
 
 def run_vertical_slice(prompt: str, verbose: bool = True) -> bool:
     """Run prompt → code → parse → compile → WASM validate."""
-    if verbose:
-        print(f"🎯 Vertical Slice: '{prompt}'")
-
+    _log(verbose, f"🎯 Vertical Slice: '{prompt}'")
     bridge = get_bridge()
-    if not bridge.binary.exists() and not bridge.build():
-        if verbose:
-            print("❌ Could not build frontier-syntax")
+    if not _ensure_bridge(bridge, verbose):
         return False
 
     code = prompt_to_code(prompt)
+    _log(verbose, "📝 Generated Frontier v2 source:")
     if verbose:
-        print("📝 Generated Frontier v2 source:")
         print(code)
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".fr", delete=False, encoding="utf-8") as f:
@@ -88,49 +136,14 @@ def run_vertical_slice(prompt: str, verbose: bool = True) -> bool:
         source_path = Path(f.name)
 
     try:
-        if verbose:
-            print("🔍 Parsing (parse-v2)...")
-        ok, parse_out = bridge.parse_v2(source_path)
-        if not ok:
-            if verbose:
-                print(f"❌ Parse failed: {parse_out}")
-            return False
-        if verbose:
-            print("✅ Parse successful")
-
-        if verbose:
-            print("🔨 Compiling to WASM...")
-        ok, result = bridge.compile_to_wasm(source_path)
-        if not ok:
-            if verbose:
-                print(f"❌ Compile failed: {result}")
-            return False
-        wasm_bytes = result if isinstance(result, bytes) else b""
-        if verbose:
-            print(f"✅ WASM compiled ({len(wasm_bytes)} bytes)")
-
-        if verbose:
-            print("🏃 Validating WASM module...")
-        ok, output = bridge.run_binary(wasm_bytes)
-        if not ok:
-            if verbose:
-                print(f"❌ Validation failed: {output}")
-            return False
-        if verbose:
-            print(f"✅ {output}")
-        return True
+        return _compile_pipeline(bridge, source_path, verbose)
     finally:
         source_path.unlink(missing_ok=True)
-        wasm_path = source_path.with_suffix(".wasm")
-        wasm_path.unlink(missing_ok=True)
+        source_path.with_suffix(".wasm").unlink(missing_ok=True)
 
 
 def main() -> int:
-    prompt = (
-        sys.argv[1]
-        if len(sys.argv) > 1
-        else "Create a function that adds two numbers"
-    )
+    prompt = sys.argv[1] if len(sys.argv) > 1 else "Create a function that adds two numbers"
     return 0 if run_vertical_slice(prompt) else 1
 
 

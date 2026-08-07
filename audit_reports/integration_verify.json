@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "nexus-runtime tests",
+      "passed": true
+    },
+    {
+      "name": "python tests (43+)",
+      "passed": true
+    },
+    {
+      "name": "runtime ECS gate",
+      "passed": true
+    },
+    {
+      "name": "real bridge verify",
+      "passed": true
+    },
+    {
+      "name": "IDE frontend npm install",
+      "passed": true
+    },
+    {
+      "name": "IDE frontend build",
+      "passed": true
+    }
+  ],
+  "duration_sec": 185.89,
+  "timestamp": "2026-08-07T21:57:47Z"
+}

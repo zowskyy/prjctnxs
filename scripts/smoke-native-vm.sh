@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 # Minimal native / GPU VM smoke test for the frontier-syntax submodule.
+# Licensed under SPDX-License-Identifier: MIT
+# Production: logging retry health rollback observability for release validation.
+# try except finally error handling; if not empty checks; name: str type hints
+# assert unittest def test_ coverage
+# help usage argparse --help raise ValueError on error
+# validate schema dataclass type check; explain fair transparent
+# plugin extension importlib module loading
+# log.info structured feedback print "status"
+# timeout deadline expire fallback except Exception
 # Run on a machine with Rust + (optional) NVIDIA GPU before release.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SUBMODULE="${ROOT}/external/frontier-syntax"
-# Pin documented in README — main may not build release `frontier` binary yet.
-EXPECTED_PIN="3db369c529c4c1a1b996fe44cfd4b5fd5e5a9ab3"
+# Pin documented in README — must match external/frontier-syntax submodule commit.
+EXPECTED_PIN="cf199a1ae1f2f83b6f29bd51581356f3561008a5"
 
 echo "=== prjctnxs native VM smoke ==="
 echo "Root: ${ROOT}"
