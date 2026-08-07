@@ -19,3 +19,6 @@ cursor-app/node_modules/
 cursor-app/src-tauri/target/
 # Legacy clone path at repo root (use external/frontier-syntax submodule)
 /frontier-syntax/
+*.pyc
+.cursor/gate-logs/
+.cursor/gate-cache/
