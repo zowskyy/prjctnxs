@@ -102,6 +102,9 @@ jobs:
         run: cargo build --release -p frontier
         working-directory: external/frontier-syntax
 
+      - name: Build nexus-runtime for bench test
+        run: cargo build --release -p nexus-runtime
+
       - name: Install ripgrep (required by native AI grep test)
         run: sudo apt-get update && sudo apt-get install -y ripgrep
 
