@@ -13,16 +13,30 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Bundle output path for Linux release builds (Tauri 2).
-BUNDLE_DIR="${ROOT}/cursor-app/src-tauri/target/release/bundle"
+
+# Tauri 2 in a Cargo workspace writes bundles to the workspace target dir.
+CANDIDATES=(
+  "${ROOT}/target/release/bundle"
+  "${ROOT}/cursor-app/src-tauri/target/release/bundle"
+)
 
 echo "=== verify Tauri Linux bundle ==="
-echo "Expected bundle dir: cursor-app/src-tauri/target/release/bundle"
 
-if [[ ! -d "${BUNDLE_DIR}" ]]; then
-  echo "ERROR: bundle directory missing: ${BUNDLE_DIR}"
+BUNDLE_DIR=""
+for candidate in "${CANDIDATES[@]}"; do
+  if [[ -d "${candidate}" ]]; then
+    BUNDLE_DIR="${candidate}"
+    break
+  fi
+done
+
+if [[ -z "${BUNDLE_DIR}" ]]; then
+  echo "ERROR: bundle directory missing. Checked:"
+  printf '  %s\n' "${CANDIDATES[@]}"
   exit 1
 fi
+
+echo "Bundle dir: ${BUNDLE_DIR#${ROOT}/}"
 
 mapfile -t artifacts < <(find "${BUNDLE_DIR}" -type f | sort)
 if [[ "${#artifacts[@]}" -lt 1 ]]; then

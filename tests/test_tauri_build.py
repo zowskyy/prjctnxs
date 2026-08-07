@@ -75,7 +75,7 @@ class TestTauriBuildCI(unittest.TestCase):
             text = VERIFY_SCRIPT.read_text(encoding="utf-8")
         except Exception as exc:
             raise ValueError(f"error reading verify script: {exc}") from exc
-        self.assertIn(TAURI_BUNDLE_REL, text)
+        self.assertIn("target/release/bundle", text)
         self.assertIn("TAURI_BUNDLE_PASS", text)
 
 
