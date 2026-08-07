@@ -169,6 +169,17 @@ project-nexus/
 | **Cursor IDE** | **42 MB** | ✅ |
 | **TOTAL** | **~139 MB** | ✅ |
 
+## frontier-syntax submodule pin
+
+`external/frontier-syntax` is pinned to **`3db369c`** (not `origin/main`). As of this release, `frontier-syntax` `main` (`076e703`) fails `cargo build --release --bin frontier` (`frontier::repl` unresolved). Re-pin only after `main` builds the release `frontier` binary again.
+
+```bash
+git submodule update --init --recursive
+# optional: native / GPU VM smoke before ship
+bash scripts/smoke-native-vm.sh
+bash scripts/release-audit.sh
+```
+
 Related: [frontier-syntax](https://github.com/zowskyy/frontier-syntax) — formally verifiable lexicon & A+ Hard Gate Protocol.
 
 ## Why This Matters
